@@ -21,13 +21,16 @@ transformers==4.48.2
 
 # ==== AI providers ====
 google-generativeai==0.8.3
+google-api-core==2.19.2
 openai==1.59.6
 anthropic==0.42.0
 
 # ==== Camera / monitoring ====
 opencv-python==4.10.0.84
 mediapipe==0.10.20
-deepface==0.0.93
+protobuf==4.25.9
+grpcio==1.62.3
+grpcio-status==1.62.3
 
 # ==== Cache ====
 redis==5.2.1
