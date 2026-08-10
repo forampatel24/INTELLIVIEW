@@ -17,6 +17,12 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-sonnet-4"
 
+    db_host: str = "localhost"
+    db_port: int = 3306
+    db_user: str = "root"
+    db_password: str = ""
+    db_name: str = "intellivue"
+
     resume_provider: str = ""
     question_provider: str = ""
     evaluation_provider: str = ""
