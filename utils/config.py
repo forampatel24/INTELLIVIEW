@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     db_password: str = ""
     db_name: str = "intellivue"
 
+    jwt_secret: str = "change_me_to_a_long_random_string"
+    jwt_algorithm: str = "HS256"
+    jwt_access_expire_minutes: int = 60
+    jwt_refresh_expire_days: int = 7
+
     resume_provider: str = ""
     question_provider: str = ""
     evaluation_provider: str = ""
