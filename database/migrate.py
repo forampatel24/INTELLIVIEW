@@ -15,7 +15,7 @@ class Database:
         self.host = host or settings.db_host
         self.port = port or settings.db_port
         self.user = user or settings.db_user
-        self.password = password if password is not None else settings.db_password
+        self.password = password if password else settings.db_password
         self.name = name or settings.db_name
 
     def _server_conn(self) -> pymysql.Connection:
