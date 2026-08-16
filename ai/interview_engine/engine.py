@@ -104,6 +104,16 @@ class InterviewEngine:
     ) -> dict:
         if state.is_complete:
             raise ValueError("Interview already complete")
+        if state.current_index >= len(state.questions):
+            # Question not yet requested — generate it so the flow is forgiving.
+            question = self.question_generator.generate(
+                state.round_type,
+                state.difficulty,
+                state.focus_skills,
+                asked_texts=[q.text for q in state.questions],
+            )
+            question.question_id = self.session_service.save_question(state.session_id, question)
+            state.questions.append(question)
         question = state.questions[state.current_index]
         answer = AnswerRecord(
             question=question,

@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Optional
 
 import pymysql
+from pymysql.cursors import DictCursor
 
 from utils.config import settings
 
@@ -48,6 +49,7 @@ class Database:
             database=self.name,
             charset="utf8mb4",
             autocommit=True,
+            cursorclass=DictCursor,
         )
 
     def _ensure_migrations_table(self, conn: pymysql.Connection) -> None:
