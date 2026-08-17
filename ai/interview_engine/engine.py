@@ -31,11 +31,11 @@ class InterviewEngine:
             -> adaptive next question -> completion
     """
 
-    def __init__(self, use_ai: bool = True):
+    def __init__(self, use_ai: bool = True, bank=None):
         self.use_ai = use_ai
         self.session_service = InterviewSessionService()
         self.difficulty_selector = DifficultySelector()
-        self.question_generator = QuestionGenerator(use_ai=use_ai)
+        self.question_generator = QuestionGenerator(use_ai=use_ai, bank=bank)
         self.answer_evaluator = AnswerEvaluator(use_ai=use_ai)
         self.skill_extractor = SkillExtractor()
 
@@ -79,6 +79,7 @@ class InterviewEngine:
                 state.difficulty,
                 state.focus_skills,
                 asked_texts=asked_texts,
+                domain_id=state.domain_id,
             )
             question.question_id = self.session_service.save_question(state.session_id, question)
             state.questions.append(question)
@@ -111,6 +112,7 @@ class InterviewEngine:
                 state.difficulty,
                 state.focus_skills,
                 asked_texts=[q.text for q in state.questions],
+                domain_id=state.domain_id,
             )
             question.question_id = self.session_service.save_question(state.session_id, question)
             state.questions.append(question)

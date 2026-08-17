@@ -38,8 +38,10 @@ PROMPTS = {
 
 
 class QuestionGenerator:
-    def __init__(self, use_ai: bool = True):
+    def __init__(self, use_ai: bool = True, bank=None):
         self.use_ai = use_ai
+        self.bank = bank  # optional QuestionBankService
+        self._bank_exclude: set[int] = set()
 
     def generate(
         self,
@@ -47,8 +49,22 @@ class QuestionGenerator:
         difficulty: Difficulty,
         focus_skills: list[str],
         asked_texts: Optional[list[str]] = None,
+        domain_id: Optional[int] = None,
     ) -> QuestionRecord:
         asked_texts = asked_texts or []
+
+        # 1. Prefer the curated bank for domain-mode sessions (no AI cost, guaranteed quality).
+        if self.bank is not None and domain_id is not None:
+            bank_q = self.bank.get_random(
+                domain_id=domain_id,
+                question_type=round_type,
+                difficulty=difficulty,
+                exclude_ids=list(self._bank_exclude),
+            )
+            if bank_q is not None:
+                self._bank_exclude.add(bank_q.question_id)
+                return bank_q
+
         focus = ", ".join(focus_skills[:5]) if focus_skills else "general programming"
         template = PROMPTS.get(round_type, PROMPTS[QuestionType.THEORY])
 
