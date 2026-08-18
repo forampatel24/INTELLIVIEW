@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     evaluation_provider: str = ""
     behavior_provider: str = ""
     feedback_provider: str = ""
+    report_provider: str = ""
 
     @property
     def task_providers(self) -> dict[str, str]:
@@ -42,6 +43,7 @@ class Settings(BaseSettings):
             "answer_evaluation": self.evaluation_provider or self.default_ai_provider,
             "behavior_analysis": self.behavior_provider or self.default_ai_provider,
             "feedback_generation": self.feedback_provider or self.default_ai_provider,
+            "report_generation": self.report_provider or self.default_ai_provider,
         }
 
 

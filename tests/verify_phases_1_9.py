@@ -14,6 +14,7 @@ os.environ["QUESTION_PROVIDER"] = "mock"
 os.environ["EVALUATION_PROVIDER"] = "mock"
 os.environ["BEHAVIOR_PROVIDER"] = "mock"
 os.environ["FEEDBACK_PROVIDER"] = "mock"
+os.environ["REPORT_PROVIDER"] = "mock"
 
 from services.llm.router import get_router
 get_router.cache_clear()
@@ -56,8 +57,8 @@ print("=" * 64)
 print("PHASE 2 - AI MULTI-PROVIDER LAYER")
 print("=" * 64)
 from services.llm import TASKS, LLMError, router
-check("TASKS defined", len(TASKS) == 5, str(TASKS))
-check("all 5 tasks route", all(router.provider_for(t) for t in TASKS))
+check("TASKS defined", len(TASKS) == 6, str(TASKS))
+check("all 6 tasks route", all(router.provider_for(t) for t in TASKS))
 mock_resp = router.generate("question_generation", "hi")
 check("mock provider responds", mock_resp.text.startswith("[mock:"))
 try:

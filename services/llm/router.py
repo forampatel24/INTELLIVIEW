@@ -11,6 +11,7 @@ TASKS = (
     "answer_evaluation",
     "behavior_analysis",
     "feedback_generation",
+    "report_generation",
 )
 
 

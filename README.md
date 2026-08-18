@@ -15,7 +15,8 @@
 | **Question Bank & Rounds** | 77 curated questions across 20 domains, all 5 round types (**MCQ, Coding, Theory, Scenario, Rapid Fire**) and all 3 difficulties, stored in MySQL with answer keys. Domain-mode interviews pull from the bank first (no AI cost); AI generation is the fallback. |
 | **Domain System** | 31 predefined interview domains across 7 categories — from Python/C++/React to ML/DL/Cybersecurity to Finance/Marketing/Behavioral. |
 | **Feedback Engine** | Computes structured metrics (per-difficulty, per-skill, MCQ accuracy, consistency) and generates a hire/maybe/reject recommendation with strengths, weaknesses, and next steps. |
-| **Multi-Provider AI Layer** | One router, five AI tasks (`resume_analysis`, `question_generation`, `answer_evaluation`, `behavior_analysis`, `feedback_generation`), each configurable to run on **Gemini, OpenAI, or Claude**. A built-in `mock` provider lets the whole system run with zero API keys. |
+| **Report Generator** | Builds a recruiter-ready report from a completed session: radar/heatmap/timeline chart data, strengths, weaknesses, suggestions, curated learning resources, and a recruiter-facing summary. |
+| **Multi-Provider AI Layer** | One router, six AI tasks (`resume_analysis`, `question_generation`, `answer_evaluation`, `behavior_analysis`, `feedback_generation`, `report_generation`), each configurable to run on **Gemini, OpenAI, or Claude**. A built-in `mock` provider lets the whole system run with zero API keys. |
 | **Auth** | JWT-based registration/login/refresh with bcrypt password hashing and role support (`user` / `recruiter` / `admin`). |
 | **Camera & Anti-Cheating** *(upcoming)* | MediaPipe + OpenCV monitoring, eye tracking, and warning system. |
 
@@ -75,10 +76,10 @@ INTELLIVIEW/
 │   ├── question_bank/        # 77 curated questions + bank service
 │   ├── domains/              # 31 predefined domains + domain service
 │   ├── feedback_engine/      # metrics + feedback generation
+│   ├── report_generator/     # report data builders + ReportGenerator
 │   ├── face_monitor/         # (upcoming) camera monitoring
 │   ├── eye_tracker/          # (upcoming)
 │   ├── emotion_detector/     # (upcoming)
-│   └── report_generator/     # (upcoming)
 ├── auth/                     # security, tokens, dependencies, auth service
 ├── backend/
 │   ├── main.py               # FastAPI app entry point
@@ -196,9 +197,10 @@ venv\Scripts\python -m uvicorn backend.main:app --reload
 
 ```bash
 venv\Scripts\python tests\verify_phases_1_9.py
+venv\Scripts\python tests\verify_phase_10.py
 ```
 
-This runs **55 checks** across phases 1–9: scaffolding, AI router, database, auth, resume parsing, interview engine, domains, question bank, and feedback — against a live MySQL connection, then cleans up after itself.
+The first script runs **55 checks** across phases 1–9: scaffolding, AI router, database, auth, resume parsing, interview engine, domains, question bank, and feedback. The second runs **25 checks** for phase 10 (report generator) — both against a live MySQL connection, then clean up after themselves.
 
 ---
 
@@ -214,6 +216,7 @@ QUESTION_PROVIDER=openai
 EVALUATION_PROVIDER=claude
 BEHAVIOR_PROVIDER=gemini
 FEEDBACK_PROVIDER=gemini
+REPORT_PROVIDER=gemini
 ```
 
 Available providers: `gemini`, `openai`, `claude`, `mock`.
@@ -241,7 +244,7 @@ Full DDL lives in [`database/schema.sql`](database/schema.sql). Schema changes g
 | 7 — Domain System | ✅ |
 | 8 — Question Bank & Rounds | ✅ |
 | 9 — Feedback Engine | ✅ |
-| 10 — Report Generator | ⏳ |
+| 10 — Report Generator | ✅ |
 | 11 — Camera Monitoring Service | ⏳ |
 | 12 — Anti-Cheating Module | ⏳ |
 | 13 — React Frontend Setup | ⏳ |
