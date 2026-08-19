@@ -22,7 +22,8 @@ class CameraMonitor:
 
     Frames are analyzed and logged at most every ``log_interval_sec`` seconds
     (snapshot + eye tracking each once per interval). ``on_warning`` is called
-    for rule triggers — the anti-cheating module (phase 12) will supply rules.
+    for rule triggers. When an ``anti_cheating`` engine (phase 12) is attached,
+    it takes over warning handling and the inline rules below are skipped.
     """
 
     def __init__(
@@ -32,12 +33,18 @@ class CameraMonitor:
         service: Optional[CameraMonitoringService] = None,
         log_interval_sec: float = 1.0,
         on_warning: Optional[Callable[[int, str, str, str], None]] = None,
+        anti_cheating: Optional[object] = None,
     ):
         self.session_id = session_id
         self.analyzer = analyzer or FrameAnalyzer()
         self.service = service or CameraMonitoringService()
         self.log_interval_sec = log_interval_sec
         self.on_warning = on_warning
+        # Optional phase-12 AntiCheatingEngine. Attach it here (or wire after
+        # construction) and it will receive every logged snapshot.
+        self.anti_cheating = anti_cheating
+        if self.anti_cheating is not None and self.anti_cheating.on_warning is None:
+            self.anti_cheating.on_warning = self.on_warning
         self._last_log_time = 0.0
         self._running = False
         self._frames_processed = 0
@@ -129,6 +136,10 @@ class CameraMonitor:
         if snapshot.gaze_x is not None or snapshot.gaze_y is not None:
             self.service.log_eye(self.session_id, snapshot)
             self._eye_logged += 1
+        # When an anti-cheating engine is attached it handles all rules.
+        if self.anti_cheating is not None:
+            self.anti_cheating.evaluate_snapshot(snapshot, session_id=self.session_id)
+            return
         if snapshot.looking_away and self.on_warning:
             self.on_warning(self.session_id, "looking_away", "Candidate looked away from camera", "medium")
         if snapshot.drowsy and self.on_warning:

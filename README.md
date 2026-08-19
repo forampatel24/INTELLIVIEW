@@ -17,9 +17,9 @@
 | **Feedback Engine** | Computes structured metrics (per-difficulty, per-skill, MCQ accuracy, consistency) and generates a hire/maybe/reject recommendation with strengths, weaknesses, and next steps. |
 | **Report Generator** | Builds a recruiter-ready report from a completed session: radar/heatmap/timeline chart data, strengths, weaknesses, suggestions, curated learning resources, and a recruiter-facing summary. |
 | **Camera Monitoring Service** | Real-time camera analysis with MediaPipe FaceMesh (OpenCV Haar fallback): face detection, eye aspect ratio (blink/drowsiness), gaze/eye contact, head movement, smile detection, attention scoring — logged to `camera_logs`, `eye_tracking`, `warnings`, `activity_logs`, and `analytics`. |
+| **Anti-Cheating Module** | Rule engine over camera snapshots and client events (tab switch, copy/paste, fullscreen exit): sustained no-face / looking-away / drowsiness / low-attention / head-movement escalations, weighted risk score (0–100), and a per-session verdict (`clean` / `suspicious` / `flagged`). |
 | **Multi-Provider AI Layer** | One router, six AI tasks (`resume_analysis`, `question_generation`, `answer_evaluation`, `behavior_analysis`, `feedback_generation`, `report_generation`), each configurable to run on **Gemini, OpenAI, or Claude**. A built-in `mock` provider lets the whole system run with zero API keys. |
 | **Auth** | JWT-based registration/login/refresh with bcrypt password hashing and role support (`user` / `recruiter` / `admin`). |
-| **Camera & Anti-Cheating** *(upcoming)* | MediaPipe + OpenCV monitoring, eye tracking, and warning system. |
 
 ---
 
@@ -80,6 +80,7 @@ INTELLIVIEW/
 │   ├── report_generator/     # report data builders + ReportGenerator
 │   ├── face_monitor/         # camera monitoring: detector, analyzer, service, monitor
 │   ├── eye_tracker/          # gaze/blink tracking (EyeTracker)
+│   ├── anti_cheating/        # rule engine, risk scoring, session verdicts
 │   ├── emotion_detector/     # (upcoming)
 ├── auth/                     # security, tokens, dependencies, auth service
 ├── backend/
@@ -200,9 +201,10 @@ venv\Scripts\python -m uvicorn backend.main:app --reload
 venv\Scripts\python tests\verify_phases_1_9.py
 venv\Scripts\python tests\verify_phase_10.py
 venv\Scripts\python tests\verify_phase_11.py
+venv\Scripts\python tests\verify_phase_12.py
 ```
 
-The first script runs **55 checks** across phases 1–9: scaffolding, AI router, database, auth, resume parsing, interview engine, domains, question bank, and feedback. The phase 10 script runs **25 checks** for the report generator, and the phase 11 script runs **28 checks** for the camera monitoring service — all against a live MySQL connection, then clean up after themselves. (Run the suites one at a time — they share the same test tables.)
+The first script runs **55 checks** across phases 1–9: scaffolding, AI router, database, auth, resume parsing, interview engine, domains, question bank, and feedback. The phase 10 script runs **25 checks** for the report generator, the phase 11 script runs **28 checks** for the camera monitoring service, and the phase 12 script runs **39 checks** for the anti-cheating module — all against a live MySQL connection, then clean up after themselves. (Run the suites one at a time — they share the same test tables.)
 
 ---
 
@@ -248,7 +250,7 @@ Full DDL lives in [`database/schema.sql`](database/schema.sql). Schema changes g
 | 9 — Feedback Engine | ✅ |
 | 10 — Report Generator | ✅ |
 | 11 — Camera Monitoring Service | ✅ |
-| 12 — Anti-Cheating Module | ⏳ |
+| 12 — Anti-Cheating Module | ✅ |
 | 13 — React Frontend Setup | ⏳ |
 | 14 — Frontend Pages | ⏳ |
 | 15 — API Integration | ⏳ |
