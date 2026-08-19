@@ -4,6 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.routers.auth import router as auth_router
+from backend.routers.domains import router as domains_router
+from backend.routers.interviews import router as interviews_router
+from backend.routers.monitoring import router as monitoring_router
+from backend.routers.questions import router as questions_router
+from backend.routers.resumes import router as resumes_router
 from database.migrate import migrate
 
 
@@ -29,6 +34,11 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(resumes_router)
+app.include_router(domains_router)
+app.include_router(questions_router)
+app.include_router(interviews_router)
+app.include_router(monitoring_router)
 
 
 @app.get("/", tags=["health"])
